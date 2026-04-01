@@ -1,0 +1,9 @@
+name = "clipboard"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "clipboard-db"
+database_id = "f525d2f9-5cd1-44c4-a172-e36331c04bf2"
