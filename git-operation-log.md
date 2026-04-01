@@ -95,3 +95,36 @@ Uploaded current workspace to the target GitHub repository and force-updated rem
 - Unrelated workspace changes were intentionally not included in this commit:
   - deleted local file: `b_AA3W1ExDWGC-1775022225769.zip`
   - untracked local file: `v0-dev-source.zip`
+
+---
+
+## Branch Alignment Operations (2026-04-01)
+
+### Request
+- Keep only one Git branch: `main`.
+- Use Cloudflare production deployment flow with `main`.
+
+### Actions Performed
+
+1. Checked remote branch status
+- Verified remote heads before cleanup.
+
+2. Deleted remote `production` branch
+- Command: `git push origin --delete production`
+- Result: success.
+
+3. Verified only `main` remains on remote
+- Command: `git ls-remote --heads origin`
+- Result: only `refs/heads/main` present.
+
+4. Rebuilt and redeployed Cloudflare using `main`
+- Command:
+  - `pnpm run pages:build`
+  - `pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard --branch=main`
+- Result: success.
+- Deployment URL: `https://6d555373.clipboard-bly.pages.dev`
+- Alias URL: `https://main.clipboard-bly.pages.dev`
+
+### Final State
+- GitHub remote branches: `main` only.
+- Cloudflare deployment branch used: `main`.
