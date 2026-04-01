@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { LogOut, Clipboard } from "lucide-react"
+import { LogOut, Clipboard, PanelLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TopicSidebar, type Topic } from "@/components/topic-sidebar"
 import { ClipboardEditor } from "@/components/clipboard-editor"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useAuth } from "@/lib/auth-context"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 
 export function Dashboard() {
   const { logout } = useAuth()
@@ -16,6 +18,8 @@ export function Dashboard() {
   const [isSaving, setIsSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   const fetchTopics = useCallback(async () => {
     try {
@@ -43,6 +47,9 @@ export function Dashboard() {
     setSelectedTopic(topic)
     setContent(topic.content || "")
     setLastSaved(topic.updated_at)
+    if (isMobile) {
+      setIsSidebarOpen(false)
+    }
   }
 
   const handleSave = async () => {
@@ -136,16 +143,27 @@ export function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex h-dvh items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-dvh flex-col bg-background">
       <header className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <PanelLeft className="h-4 w-4" />
+              <span className="sr-only">Open topics</span>
+            </Button>
+          )}
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Clipboard className="h-4 w-4 text-primary-foreground" />
           </div>
@@ -161,16 +179,18 @@ export function Dashboard() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-64 shrink-0">
-          <TopicSidebar
-            topics={topics}
-            selectedTopicId={selectedTopic?.id ?? null}
-            onSelectTopic={handleSelectTopic}
-            onCreateTopic={handleCreateTopic}
-            onDeleteTopic={handleDeleteTopic}
-            onRenameTopic={handleRenameTopic}
-          />
-        </div>
+        {!isMobile && (
+          <div className="w-64 shrink-0">
+            <TopicSidebar
+              topics={topics}
+              selectedTopicId={selectedTopic?.id ?? null}
+              onSelectTopic={handleSelectTopic}
+              onCreateTopic={handleCreateTopic}
+              onDeleteTopic={handleDeleteTopic}
+              onRenameTopic={handleRenameTopic}
+            />
+          </div>
+        )}
         <ClipboardEditor
           topic={selectedTopic}
           content={content}
@@ -180,6 +200,24 @@ export function Dashboard() {
           lastSaved={lastSaved}
         />
       </div>
+
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <SheetContent side="left" className="w-[85vw] p-0 sm:max-w-sm">
+          <SheetHeader className="border-b border-border">
+            <SheetTitle>Topics</SheetTitle>
+          </SheetHeader>
+          <div className="h-full overflow-hidden">
+            <TopicSidebar
+              topics={topics}
+              selectedTopicId={selectedTopic?.id ?? null}
+              onSelectTopic={handleSelectTopic}
+              onCreateTopic={handleCreateTopic}
+              onDeleteTopic={handleDeleteTopic}
+              onRenameTopic={handleRenameTopic}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

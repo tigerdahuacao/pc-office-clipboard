@@ -29,7 +29,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-dvh flex-col bg-background">
       <header className="flex items-center justify-end p-4">
         <ThemeToggle />
       </header>

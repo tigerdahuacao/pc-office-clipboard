@@ -163,7 +163,7 @@ export function TopicSidebar({
                   <span className="flex-1 truncate text-sm">{topic.name}</span>
                   <div
                     className={cn(
-                      "flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100",
+                      "flex items-center gap-1 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100",
                       selectedTopicId === topic.id && "opacity-100"
                     )}
                   >
