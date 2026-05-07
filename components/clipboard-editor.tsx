@@ -99,8 +99,7 @@ export function ClipboardEditor({
             value={content}
             onChange={(e) => onContentChange(e.target.value)}
             placeholder="Paste or type your content here..."
-            className="w-full min-h-[60dvh] resize-none font-mono text-sm leading-relaxed bg-transparent border-0 p-4 sm:min-h-[calc(100dvh-220px)] focus:outline-none focus:ring-0"
-            style={{ field-sizing: "content" }}
+            className="w-full min-h-[60dvh] resize-none font-mono text-sm leading-relaxed bg-transparent border-0 p-4 sm:min-h-[calc(100dvh-220px)] focus:outline-none"
           />
         </div>
       </div>
