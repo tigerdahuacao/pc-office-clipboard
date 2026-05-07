@@ -1,27 +1,35 @@
 -- Cloudflare D1 Database Initialization Script
--- Run this script to initialize your D1 database:
--- wrangler d1 execute clipboard-db --file=./scripts/d1-init.sql
+-- Multi-user clipboard with session-based authentication
 
--- Settings table for storing the login password
-CREATE TABLE IF NOT EXISTS settings (
+-- Users table for authentication
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    key TEXT UNIQUE NOT NULL,
-    value TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Topics table for storing clipboard content
+-- Topics table with user ownership
 CREATE TABLE IF NOT EXISTS topics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     content TEXT DEFAULT '',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Insert default password (change this to your desired password)
-INSERT OR IGNORE INTO settings (key, value) VALUES ('password', 'clipboard123');
+-- Session tokens for authentication
+CREATE TABLE IF NOT EXISTS sessions (
+    id TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    expires_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
--- Insert a default topic
-INSERT INTO topics (name, content) VALUES ('Default', 'Welcome to your personal clipboard!');
+-- Create default test user (password: password123)
+INSERT INTO users (username, password_hash) VALUES ('demo', 'password123');
+
+-- Create default topic for demo user
+INSERT INTO topics (user_id, name, content) VALUES (1, 'Default', 'Welcome to your personal clipboard!');

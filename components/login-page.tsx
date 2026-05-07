@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Clipboard, Lock, Eye, EyeOff } from "lucide-react"
+import { Clipboard, User, Lock, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/lib/auth-context"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export function LoginPage() {
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -19,12 +20,12 @@ export function LoginPage() {
     setError("")
     setIsLoading(true)
 
-    const success = await login(password)
-    
+    const success = await login(username, password)
+
     if (!success) {
-      setError("Incorrect password")
+      setError("Invalid username or password")
     }
-    
+
     setIsLoading(false)
   }
 
@@ -33,7 +34,7 @@ export function LoginPage() {
       <header className="flex items-center justify-end p-4">
         <ThemeToggle />
       </header>
-      
+
       <main className="flex flex-1 items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="mb-8 flex flex-col items-center">
@@ -41,10 +42,22 @@ export function LoginPage() {
               <Clipboard className="h-8 w-8 text-primary-foreground" />
             </div>
             <h1 className="text-2xl font-semibold text-foreground">Clipboard</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Enter password to access</p>
+            <p className="mt-2 text-sm text-muted-foreground">Enter your credentials to access</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="h-11 pl-10"
+                autoFocus
+              />
+            </div>
+
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -53,7 +66,6 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-11 pl-10 pr-10"
-                autoFocus
               />
               <button
                 type="button"
@@ -68,12 +80,12 @@ export function LoginPage() {
               <p className="text-sm text-destructive">{error}</p>
             )}
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full h-11"
-              disabled={isLoading || !password}
+              disabled={isLoading || !username || !password}
             >
-              {isLoading ? "Verifying..." : "Login"}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </div>

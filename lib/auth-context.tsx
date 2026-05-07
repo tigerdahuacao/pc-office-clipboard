@@ -2,37 +2,61 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 
+interface User {
+  id: number
+  username: string
+}
+
 interface AuthContextType {
+  user: User | null
   isAuthenticated: boolean
-  login: (password: string) => Promise<boolean>
-  logout: () => void
+  login: (username: string, password: string) => Promise<boolean>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const auth = sessionStorage.getItem("clipboard-auth")
-    if (auth === "true") {
-      setIsAuthenticated(true)
-    }
-    setIsLoading(false)
+    // Check if we have a valid session on mount
+    checkSession()
   }, [])
 
-  const login = async (password: string): Promise<boolean> => {
+  const checkSession = async () => {
+    try {
+      const response = await fetch("/api/auth", {
+        method: "GET",
+        credentials: "include" // Important: send cookies
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.user) {
+          setUser(data.user)
+        }
+      }
+    } catch {
+      // Session check failed, user is not authenticated
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const login = async (username: string, password: string): Promise<boolean> => {
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
       })
-      
+
       if (response.ok) {
-        setIsAuthenticated(true)
-        sessionStorage.setItem("clipboard-auth", "true")
+        const data = await response.json()
+        setUser(data.user)
         return true
       }
       return false
@@ -41,9 +65,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const logout = () => {
-    setIsAuthenticated(false)
-    sessionStorage.removeItem("clipboard-auth")
+  const logout = async () => {
+    try {
+      await fetch("/api/auth", {
+        method: "DELETE",
+        credentials: "include"
+      })
+    } finally {
+      setUser(null)
+    }
   }
 
   if (isLoading) {
@@ -55,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
