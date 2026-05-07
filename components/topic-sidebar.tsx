@@ -181,7 +181,7 @@ export function TopicSidebar({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 hover:text-destructive"
+                      className="h-6 w-6 hover:text-destructive sm:opacity-100"
                       onClick={(e) => {
                         e.stopPropagation()
                         onDeleteTopic(topic.id)

@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "pages:build:note": "echo 'If pages:build fails on native Windows, run it in or CI Linux.'",
     "pages:build": "pnpm exec next-on-pages",
-    "pages:deploy": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard",
+    "pages:deploy": "pnpm run pages:deploy:prod",
+    "pages:deploy:prod": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard --branch=production",
+    "pages:deploy:preview": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard --branch=dev",
     "pages:dev": "pnpm exec wrangler pages dev .vercel/output/static --compatibility-date=2026-04-01 --compatibility-flag=nodejs_compat"
   },
   "dependencies": {

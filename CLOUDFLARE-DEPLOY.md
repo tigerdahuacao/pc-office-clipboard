@@ -87,7 +87,9 @@ EN: Add/confirm scripts in `package.json`.
 {
   "scripts": {
     "pages:build": "pnpm exec @cloudflare/next-on-pages",
-    "pages:deploy": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard",
+    "pages:deploy": "pnpm run pages:deploy:prod",
+    "pages:deploy:prod": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard --branch=main",
+    "pages:deploy:preview": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard --branch=dev",
     "pages:dev": "pnpm exec wrangler pages dev .vercel/output/static --compatibility-date=2026-04-01 --compatibility-flag=nodejs_compat"
   }
 }
@@ -102,6 +104,16 @@ pnpm run pages:deploy
 
 EN: If project is not linked, keep `--project-name=clipboard` in deploy command.
 中文：若项目未自动关联，请保留 `--project-name=clipboard` 参数。
+
+Preview deploy / 预览分支部署：
+
+```bash
+pnpm run pages:build
+pnpm run pages:deploy:preview
+```
+
+EN: `pages:deploy` now explicitly deploys to `main` via `pages:deploy:prod`.
+中文：`pages:deploy` 现在会通过 `pages:deploy:prod` 显式部署到 `main`。
 
 Windows fallback / Windows 兜底方案：
 
