@@ -3,7 +3,6 @@
 import { useEffect, useCallback, useState } from "react"
 import { Save, Clock, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import type { Topic } from "@/components/topic-sidebar"
 
 interface ClipboardEditorProps {
@@ -94,13 +93,16 @@ export function ClipboardEditor({
         </div>
       </div>
 
-      <div className="flex-1 p-3 pb-24 sm:p-6 sm:pb-6">
-        <Textarea
-          value={content}
-          onChange={(e) => onContentChange(e.target.value)}
-          placeholder="Paste or type your content here..."
-          className="h-full min-h-[60dvh] resize-none overflow-y-auto font-mono text-sm leading-relaxed sm:min-h-[calc(100dvh-220px)]"
-        />
+      <div className="flex-1 p-3 pb-24 sm:p-6 sm:pb-6 overflow-hidden">
+        <div className="h-full overflow-y-auto rounded-md border border-input bg-transparent">
+          <textarea
+            value={content}
+            onChange={(e) => onContentChange(e.target.value)}
+            placeholder="Paste or type your content here..."
+            className="w-full min-h-[60dvh] resize-none font-mono text-sm leading-relaxed bg-transparent border-0 p-4 sm:min-h-[calc(100dvh-220px)] focus:outline-none focus:ring-0"
+            style={{ field-sizing: "content" }}
+          />
+        </div>
       </div>
 
       <Button
