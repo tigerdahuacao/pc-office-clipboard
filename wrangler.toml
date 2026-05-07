@@ -6,4 +6,4 @@ pages_build_output_dir = ".vercel/output/static"
 [[d1_databases]]
 binding = "DB"
 database_name = "clipboard-db"
-database_id = "f525d2f9-5cd1-44c4-a172-e36331c04bf2"
+database_id = "dcc9e811-edfe-46bd-a16f-1790ce48eb39"
