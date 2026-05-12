@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "pages:build:note": "echo 'If pages:build fails on native Windows, run it in or CI Linux.'",
+    "create-user": "pnpm dlx wrangler@latest d1 execute clipboard-db --remote --command \"INSERT INTO users (username, password_hash) VALUES ('%s', '%s');\"",
     "pages:build": "pnpm exec next-on-pages",
     "pages:deploy": "pnpm run pages:deploy:prod",
     "pages:deploy:prod": "pnpm exec wrangler pages deploy .vercel/output/static --project-name=clipboard --branch=production",
